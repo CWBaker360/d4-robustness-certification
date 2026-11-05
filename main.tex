@@ -1,0 +1,315 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,graphicx,enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\eps}{\varepsilon}
+\input{tables/macros}
+\newcommand{\Dfour}{D_4}
+\DeclareMathOperator{\Var}{Var}
+
+\title{A Certified Robustness Threshold for Constructible Cubic Angle Approximation\\[4pt]
+\large Deterministic Error Bounds, Statistical Tolerance Certification, and Measurement Uncertainty}
+\author{C.~Wayne Baker\\ Independent researcher, Goulds, Newfoundland and Labrador, Canada}
+\date{5 November 2026 --- manuscript version 2.3}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Exact angle trisection by straightedge and compass is impossible in general, so practical constructions approximate $\theta/3$.
+For the publicly documented Baker seed $\Dfour(\theta)=2\arcsin\!\big(\tfrac43\sin\tfrac{\theta}{8}\big)$, which overshoots $\theta/3$ on $0<\theta\le 120^\circ$ with leading error $\tfrac{7}{10368}\theta^3$, we ask when that overshoot remains \emph{guaranteed} once the construction is carried out with imperfect instruments.
+We prove an exact necessary-and-sufficient chord-error tolerance $E_4(\theta)=2\sin\tfrac\theta8-\tfrac32\sin\tfrac\theta6$, extend it to simultaneous chord, scaling, calibration and arc-transfer errors, and show by convexity that the certified domain is always a single interval $(\theta_{\min},120^\circ]$.
+Fixed absolute errors give $\theta_{\min}\sim 24\,7^{-1/3}\eps_c^{1/3}$; relative calibration error gives $\theta_{\min}\sim\sqrt{3456r/7}$.
+We then separate this deterministic certificate from a statistical one: a random-effects calibration model, a readout-transfer theorem that converts tolerance bounds on measured setup means into bounds on future construction errors, a Lipschitz envelope for certification over a continuous angular interval, and Bonferroni confidence accounting.
+Reproducible Monte Carlo benchmarks (four frozen versions) show that Gaussian tail certificates become \emph{more} confidently wrong under heavy-tailed errors as calibration data grow, that naive transfer from setup means fails on an explicit counterexample, and that the corrected distribution-free procedure is valid at a quantified calibration cost.
+No claim of exact trisection is made, and the statistical methods used are standard; the contribution is their exact, construction-specific error budget.
+\end{abstract}
+
+\tableofcontents
+
+%======================================================================
+\section{Introduction}
+Wantzel showed in 1837 that a general angle cannot be trisected with straightedge and compass \cite{wantzel}.
+That negative answer leaves open a practical question that every surveyor will recognise: an approximate construction is useful only if one can say, \emph{before} knowing the exact answer, how far it can be trusted.
+
+This paper studies one public construction, the overshooting seed $\Dfour$ of \cite{bakerrepo}, and asks:
+\begin{quote}
+For which input angles can we \emph{prove} that the physically executed construction still overshoots $\theta/3$, given stated bounds on construction and measurement error?
+\end{quote}
+The answer has two forms that must not be confused.
+A \emph{deterministic certificate} (Sections~\ref{sec:det}--\ref{sec:multi}) holds for every error within hard bounds.
+A \emph{statistical certificate} (Sections~\ref{sec:anova}--\ref{sec:lip}) holds for a specified fraction of future constructions, with a specified confidence, under explicit calibration assumptions.
+Neither is a proof of exact trisection.
+
+\paragraph{Related work and scope of novelty.}
+Approximate angle trisection has been investigated previously, including rigorous error analysis by Dacar (2011)~\cite{dacar2011} and earlier work published in \emph{Survey Review} by Porter (1991)~\cite{porter1991}.
+Error propagation under uncertain geometric data has also been studied by Wallner, Krasauskas and Pottmann (2000)~\cite{wallner2000}, using a geometric framework involving exact tolerance zones and Laguerre geometry, and by Desaulniers and Stewart (1993)~\cite{desaulniers1993}, as broader background in robust geometric computation.
+The present contribution is narrower: for the publicly released Baker $D_4$ construction~\cite{bakerrepo}, we derive an exact admissible chord-error threshold, extend it to a multistage measurement-error budget, and formulate conditional statistical certification over a continuous interval of input angles.
+No priority claim is made for approximate trisection, geometric error propagation, or the classical statistical methods employed.
+
+\paragraph{Contributions.}
+(i) An exact iff tolerance for the input chord (Theorem~\ref{thm:chord}) and for combined multistage errors (Theorem~\ref{thm:multi}), with a convexity proof that the certified set is a single interval (Theorem~\ref{thm:convex}).
+(ii) Two threshold scaling laws and an explicit radius/instrument design rule (Section~\ref{sec:design}).
+(iii) A readout-transfer theorem with a counterexample showing why it is needed (Section~\ref{sec:tol}).
+(iv) A Lipschitz envelope and an exact, grid-free threshold algorithm (Section~\ref{sec:lip}).
+(v) Frozen, hashed benchmarks quantifying when each certificate is valid and what it costs (Sections~\ref{sec:exp}--\ref{sec:cost}).
+The scaling laws are the generic consequence of a cubic bias competing with an error floor; the statistical tools (random-effects ANOVA, tolerance intervals, Bonferroni, Clopper--Pearson) are classical.
+What is specific to this paper is the exact error budget for this Euclidean construction.
+
+%======================================================================
+\section{The public $\Dfour$ construction}\label{sec:construction}
+On a unit circle let $c(\theta)=2\sin(\theta/8)$ be the chord subtending $\theta/4$.
+The public seed \cite[Sec.~3]{bakerrepo} is
+\begin{equation}\label{eq:D4}
+\Dfour(\theta)=2\arcsin\!\Big(\tfrac43\sin\tfrac\theta8\Big)=2\arcsin\!\Big(\tfrac23\,c(\theta)\Big),
+\end{equation}
+obtained by scaling a constructed chord by the rational factor $2/3$ and transferring the resulting half-chord back to an angle.
+Write $e_4(\theta)=\Dfour(\theta)-\theta/3$. Then $e_4(\theta)=\tfrac{7}{10368}\theta^3+O(\theta^5)$ \cite{bakerrepo}.
+
+\begin{lemma}[Noiseless overshoot and convexity]\label{lem:e4}
+On $0<\theta\le120^\circ$: (a) $e_4(\theta)>0$; (b) $e_4''(\theta)>0$.
+\end{lemma}
+\begin{proof}
+(a) Since $\theta/6\le20^\circ$ and $\arcsin$ is increasing, $e_4>0$ iff $\tfrac23c>\sin\tfrac\theta6$, i.e.\ iff $E_4(\theta):=2\sin\tfrac\theta8-\tfrac32\sin\tfrac\theta6>0$.
+$E_4(0)=0$ and $E_4'(\theta)=\tfrac14(\cos\tfrac\theta8-\cos\tfrac\theta6)>0$ because $0<\tfrac\theta8<\tfrac\theta6<\pi$.
+(b) With $u=\theta/8$, $k=4/3$ and $f(u)=\arcsin(k\sin u)$,
+$f''(u)=k(k^2-1)\sin u\,(1-k^2\sin^2u)^{-3/2}>0$ for $k>1$, $0<u\le15^\circ$; and $e_4''(\theta)=\tfrac{2}{64}f''(u)$.
+\end{proof}
+
+%======================================================================
+\section{Exact deterministic threshold for chord error}\label{sec:det}
+Suppose the input chord is realised as $c+\delta_c$ with $|\delta_c|\le\eps_c$, all else exact.
+
+\begin{theorem}[Exact chord tolerance]\label{thm:chord}
+The perturbed construction overshoots $\theta/3$ for every admissible $\delta_c$ if and only if $\eps_c<E_4(\theta)$.
+$E_4$ is strictly increasing on $(0,120^\circ]$ with $E_4(\theta)=\tfrac{7}{13824}\theta^3+O(\theta^5)$, so for $0<\eps_c<E_4(120^\circ)$ there is a unique $\theta_{\min}(\eps_c)$ and the guarantee holds exactly on $(\theta_{\min},120^\circ]$, with
+\[
+\theta_{\min}(\eps_c)\sim \frac{24}{7^{1/3}}\,\eps_c^{1/3}\approx12.5462\,\eps_c^{1/3}\qquad(\eps_c\to0).
+\]
+For $\eps_c\ge E_4(120^\circ)\in[\EcapLo,\,\EcapHi]$ no angle in the domain is certified.
+\end{theorem}
+\begin{proof}
+The worst case is $\delta_c=-\eps_c$ because $\arcsin$ is increasing; arguments stay on the principal branch since $\tfrac23(c+\eps_c)<1$ for all relevant $\eps_c$.
+The inequality $2\arcsin(\tfrac23(c-\eps_c))>\theta/3$ is equivalent to $\eps_c<E_4(\theta)$ as in Lemma~\ref{lem:e4}(a); monotonicity is Lemma~\ref{lem:e4}(a); the constant follows from $\tfrac{7}{13824}=7/24^3$.
+\end{proof}
+The chord-to-angle sensitivity is $\partial\Dfour/\partial c=\tfrac43\,(1-\tfrac{16}{9}\sin^2\tfrac\theta8)^{-1/2}$, equal to $4/3$ at $0$ and $\approx1.4206026$ at $120^\circ$.
+
+\begin{table}[h]\centering\small
+\input{tables/t_chord}
+\caption{Robust-overshoot thresholds for input-chord error (unit radius). Enclosures are outward-rounded interval evaluations (Appendix~\ref{app:iv}); the cubic column is the leading-order estimate.}\label{tab:chord}
+\end{table}
+
+%======================================================================
+\section{Multistage measurement errors}\label{sec:multi}
+Model the executed construction as
+\[
+\widetilde D_4=2\arcsin\!\Big[\tfrac23(1+\eta)(c+\delta_c)+\delta_s\Big]+\delta_a,
+\]
+with $|\delta_c|\le\eps_c$ (chord), $|\delta_s|\le\eps_s$ (scaled length), $|\eta|\le r<1$ (relative calibration of the factor $2/3$) and $|\delta_a|\le\eps_a$ (final arc transfer, radians).
+
+\begin{theorem}[Combined error budget]\label{thm:multi}
+Assume the four errors range independently over their boxes (so the all-adverse corner is attainable), all arguments remain on the principal branch, and $c(\theta)\ge\eps_c$, so every perturbed chord $c+\delta_c$ is nonnegative. The construction is a guaranteed strict overshoot iff $F(\theta)>0$, where
+\[
+F(\theta)=(1-r)\Big(2\sin\tfrac\theta8-\eps_c\Big)-\tfrac32\eps_s-\tfrac32\sin\!\Big(\tfrac\theta6+\tfrac{\eps_a}2\Big).
+\]
+If the errors are coupled, $F>0$ remains sufficient but need not be necessary. Where $c(\theta)<\eps_c$ the perturbed chord can vanish, the constructed angle can be near $0<\theta/3$, and no overshoot is guaranteed; this regime lies below any certified interval.
+\end{theorem}
+\begin{proof}
+Since $c+\delta_c\ge0$, the argument $\tfrac23(1+\eta)(c+\delta_c)+\delta_s$ is nondecreasing in each of $\eta,\delta_c,\delta_s$, so the worst corner is $\eta=-r$, $\delta_c=-\eps_c$, $\delta_s=-\eps_s$, $\delta_a=-\eps_a$; $2\arcsin(\cdot)-\eps_a>\theta/3$ iff $\arcsin(\cdot)>\theta/6+\eps_a/2$, and $\theta/6+\eps_a/2<\pi/2$ allows taking sines.
+\end{proof}
+
+\begin{theorem}[Single threshold]\label{thm:convex}
+On $(0,120^\circ]$, $F''(\theta)=\tfrac1{24}\sin(\tfrac\theta6+\tfrac{\eps_a}2)-\tfrac{1-r}{32}\sin\tfrac\theta8>0$, and $F(0)=-(1-r)\eps_c-\tfrac32\eps_s-\tfrac32\sin\tfrac{\eps_a}2\le0$. If $\eps_c=\eps_s=\eps_a=0<r$, then $F(0)=0$ and $F'(0)=-r/4<0$. In either case, whenever some error is nonzero, $F<0$ on some interval $(0,\tau)$. Hence either $F(120^\circ)\le0$ and nothing is certified, or there is exactly one root $\theta_{\min}$ and the certified set is $(\theta_{\min},120^\circ]$.
+\end{theorem}
+\begin{proof}
+$\sin(\theta/6+\eps_a/2)\ge\sin(\theta/6)>\sin(\theta/8)$ and $1/24>(1-r)/32$. A strictly convex function that is negative on $(0,\tau)$ has at most one zero in $(0,120^\circ]$: if it had two, $\theta_1<\theta_2$, convexity on $[\tau/2,\theta_2]$ with $F(\tau/2)<0=F(\theta_1)$ would force $F(\theta_2)>0$. With all errors zero, $F=E_4>0$ by Lemma~\ref{lem:e4}.
+\end{proof}
+
+Near $0$ the margin is $\tfrac{7}{13824}\theta^3-\tfrac r4\theta-\eps_c-\tfrac32\eps_s-\tfrac34\eps_a+\dots$, so pure calibration error gives $\theta_{\min}\sim\sqrt{3456r/7}$, and the guarantee is lost everywhere once
+\[ r\ \ge\ E_4(120^\circ)/c(120^\circ)\ \in\ [\RcapLo,\,\RcapHi]. \]
+
+\subsection{Design rule: radius and instrument gates}\label{sec:design}
+Errors fall into three classes: fixed absolute lengths (scale as $1/R$ on a drawing of radius $R$), fixed relative calibration (independent of $R$), and fixed angular errors (independent of $R$ unless they arise from endpoint displacement).
+Enlarging the drawing therefore helps only the first class.
+For the illustrative hand budget $0.30$~mm chord, $0.15$~mm scale, $0.1\%$ calibration and $0.10^\circ$ arc, $F(120^\circ)<0$ at $R=100$~mm, and the critical radius is enclosed in $[\RcritLo,\,\RcritHi]$~mm.
+As $R\to\infty$ the margin is positive only if the arc gate
+\[
+\eps_a<2\arcsin\!\Big(\tfrac43(1-r)\sin15^\circ\Big)-40^\circ
+\]
+holds; for $r=10^{-3}$ this is $\eps_a<\ArcGate^\circ$ (high-precision evaluation, not interval-certified).
+No drawing size compensates for arc transfer worse than this.
+
+\begin{table}[h]\centering\small
+\resizebox{\textwidth}{!}{\input{tables/t_combined}}
+\caption{Certified thresholds for illustrative combined budgets (hypothetical tolerances, not instrument specifications).}\label{tab:combined}
+\end{table}
+
+%======================================================================
+\section{Repeated constructions and random effects}\label{sec:anova}
+Deterministic certificates need hard bounds; in practice those come from calibration.
+Construct the angle independently $m$ times and read each construction $k$ times:
+\[
+Y_{ij}=\Dfour(\theta)+b+U_i+V_{ij},\qquad \Var(U_i)=\sigma_C^2,\ \Var(V_{ij})=\sigma_R^2,
+\]
+with $b$ a persistent bias. Then $\Var(\overline Y)=\sigma_C^2/m+\sigma_R^2/(mk)$: readings average out readout noise only; setup-to-setup variation needs new constructions.
+In a balanced design the variance of $\overline Y$ is estimated by $\widehat{\Var}(\overline Y)=MS_{\text{between}}/(mk)$, and the estimated standard error is its square root. The between-setup mean square has $m-1$ degrees of freedom \cite{searle}; Satterthwaite's approximation \cite{satterthwaite} reduces to this case.
+Treating all $mk$ readings as independent is pseudo-replication.
+The variance-component decomposition and its implications for allocating independent constructions and repeated readings follow from the present model and standard variance-components theory~\cite{searle}; geodetic network optimization offers related practical context~\cite{grafarend}. Table~\ref{tab:alloc} quantifies the trade-off for this construction.
+
+\begin{remark}[Role of the experiment]
+If the constructed angle can be measured to arcseconds, so can $\theta$. The repeated-construction experiment is therefore a \emph{validation} study that characterises an apparatus; the deterministic theorem is then applied to constructions performed without measurement.
+\end{remark}
+\begin{remark}[An irony]
+The arithmetic mean of $2^j$ constructible angles is constructible by addition and repeated bisection, but averaging three arbitrary constructions would require trisecting their sum. Experimental averages here are numerical.
+\end{remark}
+
+\begin{table}[h]\centering\small
+\input{tables/t_v1}
+\caption{v1: empirical coverage of nominal one-sided 95\% procedures, averaged over angles and $k$. Gaussian tolerance = 99.9\%/95\% normal tolerance bound.}\label{tab:v1}
+\end{table}
+\begin{table}[h]\centering\small
+\input{tables/t_alloc}
+\caption{v1, Gaussian control, $\theta=60^\circ$, 32 observations: independent constructions beat repeated readings.}\label{tab:alloc}
+\end{table}
+
+%======================================================================
+\section{Tolerance bounds and readout transfer}\label{sec:tol}
+The certificate needs a lower bound $L_W$ with $P(W\le L_W)\le\alpha$ for a \emph{future} construction error $W=b+U$, whereas calibration observes setup means $X=W+\overline V$.
+
+\begin{proposition}[Naive transfer can fail]\label{prop:counter}
+Let $W=-A$ with probability $\alpha$ and $0$ otherwise, and let $\overline V$ be symmetric with $P(\overline V\le0)=\tfrac12$ and support in $[-d,d]$, $0<d<A$. Then the lower $\alpha$-quantile of $W$ is $-A$, but $P(X\le -A)=\alpha/2<\alpha$, so the lower $\alpha$-quantile of $X$ exceeds $-A$. A tolerance bound valid for $X$ can lie above the true $\alpha$-quantile of $W$.
+\end{proposition}
+
+\begin{theorem}[Readout transfer]\label{thm:transfer}
+If $P(X\le L_X)\le\alpha-\beta$ and $P(\overline V>\delta)\le\beta$, then $L_W=L_X-\delta$ satisfies $P(W\le L_W)\le\alpha$.
+\end{theorem}
+\begin{proof}
+$\{X-\overline V\le L_X-\delta\}\subseteq\{X\le L_X\}\cup\{\overline V>\delta\}$.
+\end{proof}
+The allowance $\delta$ must not be estimated from within-setup residuals $V_{ij}-\overline V_i$, which are dependent and are not draws of $\overline V$.
+In v2.2 it is the maximum of an \emph{independent} reference experiment in which blocks of $k$ readings of a known reference angle give i.i.d.\ draws of $\overline V$; this requires the readout distribution to be the same in reference and calibration runs.
+
+Distribution-free bounds use order statistics \cite{wilks}: the $r$-th smallest of $m$ i.i.d.\ observations lies below the $p$-quantile with probability $P(\mathrm{Bin}(m,p)\ge r)$; for $r=1$ the confidence is $1-(1-p)^m$.
+Parametric normal bounds use noncentral-$t$ factors \cite{owen,krishnamoorthy}.
+With five calibration angles and one readout bound, Bonferroni allocation \cite{dunn} at $1-0.05/6$ per event gives at least 95\% simultaneous confidence without independence assumptions.
+
+\begin{table}[h]\centering\small
+\input{tables/t_v21}
+\caption{v2.1 (Bonferroni, 0.99 per node, readout transfer not yet applied). Under heavy tails the Gaussian procedure becomes more confidently wrong as $m$ grows.}\label{tab:v21}
+\end{table}
+
+%======================================================================
+\section{Continuous-angle certification}\label{sec:lip}
+Bounds at node angles $\theta_1<\dots<\theta_5$ do not automatically cover angles in between.
+
+\begin{theorem}[Lipschitz envelope]\label{thm:lip}
+Suppose every realisation satisfies $|W(\theta)-W(\phi)|\le\Lambda|\theta-\phi|$. Then the lower $\alpha$-quantile $q(\theta)$ is $\Lambda$-Lipschitz, and on the event that all node bounds $L_j\le q(\theta_j)$ hold,
+\[
+L(\theta)=\max_j\big(L_j-\Lambda|\theta-\theta_j|\big)\le q(\theta)\qquad\text{for all }\theta\in[\theta_1,\theta_5].
+\]
+\end{theorem}
+\begin{proof}
+Pathwise Lipschitz continuity shifts the distribution function by at most $\Lambda|\theta-\phi|$, hence the quantile; then $q(\theta)\ge q(\theta_j)-\Lambda|\theta-\theta_j|\ge L_j-\Lambda|\theta-\theta_j|$ for every $j$.
+\end{proof}
+For purely angular error models $W$ does not depend on $\theta$ and $\Lambda=0$ (a modelling hypothesis).
+For the physical stage model, Gaussian errors admit no pathwise $\Lambda$; truncating them at $4\sigma$ gives $|\partial W/\partial\theta|\le2x'_{\max}\big[\eta_{\max}s_{\max}+s'_{\max}\,\Delta a_{\max}\big]=5.17\times10^{-5}$, with $x'_{\max}=1/6$, $s(z)=(1-z^2)^{-1/2}$ and $\Delta a_{\max}$ the worst-case shift of the arcsine argument; a finite-difference check gives a maximum of $3.90\times10^{-5}$.
+
+\paragraph{Exact threshold algorithm.}
+$L$ is piecewise linear with breakpoints at the nodes and pairwise crossings. On each piece $M=e_4+L$ is strictly convex (Lemma~\ref{lem:e4}b) with slope $e_4'+s$, $s\in\{-\Lambda,0,\Lambda\}$, so its minimum is at the left end ($s\ge0$) or at $\theta_c$ solving $e_4'(\theta_c)=\Lambda$.
+Scanning pieces from $120^\circ$ downward and solving one root gives the final certified interval exactly; no grid is used. The returned root is a binary64 value; Appendix~\ref{app:iv} gives interval enclosures for the deterministic thresholds.
+
+%======================================================================
+\section{Reproducible experiments}\label{sec:exp}
+All benchmarks use only the public $\Dfour$, binary64 arithmetic and fixed seeds, and are frozen with SHA-256 hashes (Appendix~\ref{app:hash}).
+Illustrative values: $\sigma_C=10''$, $\sigma_R=4''$, $k=2$ (v2.x).
+Scenarios: Gaussian control; bias $b=-5''$; Student-$t_4$ errors scaled to the same SD; physical stage errors propagated through the exact nonlinear map (truncated at $4\sigma$ in v2.2); and, in v2.2, the atom counterexample of Proposition~\ref{prop:counter} ($A=60''$, uniform readout half-width $20''$).
+Validity is scored against the true distribution of $W$ (analytic, or $2\times10^6$-sample simulation for the stage model) on a $0.05^\circ$ grid; this scoring grid is not part of the certificate.
+
+\begin{itemize}[nosep]
+\item \textbf{v1}: correct $t$ inference holds 95\%; $z$ undercovers at small $m$; pseudo-replication gives 77--80\%; Gaussian tolerance bounds fail under heavy tails, increasingly with $m$ (Table~\ref{tab:v1}).
+\item \textbf{v2/v2.1}: five calibration angles, simultaneous accounting, order-statistic bounds; v2.1 adopts Bonferroni (Table~\ref{tab:v21}).
+\item \textbf{v2.2}: readout transfer, Lipschitz envelope, exact threshold, atom regression test (Table~\ref{tab:v22}). The regression test confirms that naive transfer fails (58.05\% simultaneous coverage) and corrected transfer passes.
+\end{itemize}
+
+\begin{table}[h]\centering\small
+\resizebox{\textwidth}{!}{\input{tables/t_v22}}
+\caption{v2.2 results. ``95\% upper'' is the Clopper--Pearson bound \cite{clopper} on the wrong-certificate rate; ``truth'' is the true start of the certifiable interval. Every run issued a certificate. Median readout allowances $\delta$: $11.8''$ (Gaussian readout), $36.4''$ ($t_4$), $19.9''$ (atom).}\label{tab:v22}
+\end{table}
+
+Two observations deserve emphasis. First, using all nodes in the envelope makes it sharp enough that the Gaussian method in the Gaussian control shows 2.5--4.2\% wrong certificates: within its 5\% budget, but no longer the near-zero rate of the more conservative v2.1 envelope. Second, the naive order-statistic method passes the smooth scenarios; only the counterexample exposes it, which is why it is kept as a permanent regression test.
+
+%======================================================================
+\section{Calibration cost versus population coverage}\label{sec:cost}
+The distribution-free certificate is expensive, and the cost is driven by the coverage target $1-\alpha$ (Table~\ref{tab:cost}, exact binomial minima).
+
+\begin{table}[h]\centering\small
+\resizebox{\textwidth}{!}{\input{tables/t_cost}}
+\caption{Minimum calibration sizes for the v2.2 procedure ($r=1$ order statistics, six Bonferroni events).}\label{tab:cost}
+\end{table}
+
+%======================================================================
+\section{Discussion and limitations}\label{sec:disc}
+\begin{itemize}[nosep]
+\item The deterministic theorems are exact for the stated additive box model; physical tolerances must be justified independently. A statistical tolerance does not become a worst-case guarantee.
+\item Statistical certificates are conditional on stationarity of the instrument between reference and calibration runs, on the Lipschitz hypothesis between nodes, and below $10^\circ$ they are not issued.
+\item Gaussian tail extrapolation should be used only with independent evidence for Gaussian tails; otherwise the order-statistic procedure and its calibration cost apply.
+\item Bias in the construction and bias in the measuring instrument cannot be separated without a calibrated reference.
+\item All $\sigma$ values are illustrative; no physical instrument has yet been characterised.
+\item Monte Carlo reruns have not been performed independently of the author's environment; reported coverages carry Monte Carlo error (bounds in the CSV outputs).
+\end{itemize}
+\paragraph{A possible generalisation.}
+Any constructible approximation with a strictly signed polynomial bias and a convex margin should admit an analogous unique robust threshold. We state this only as an open question; this paper establishes it for the public $\Dfour$ seed alone.
+
+\paragraph{Acknowledgements.}
+Derivations, code and audits were developed with the assistance of AI systems (Anthropic Claude and OpenAI ChatGPT) used as cross-checking collaborators; all results are reproducible from the released code, and responsibility rests with the author.
+
+%======================================================================
+\appendix
+\section{Interval enclosures}\label{app:iv}
+Thresholds in Tables~\ref{tab:chord} and \ref{tab:combined} and the critical radius were obtained by binary64 root finding, then rounding the root outward to the printed number of decimals. The \emph{printed} decimal endpoints themselves were then certified: converted to radians as intervals, the functions $E_4-\eps_c$ or $F$ were evaluated in outward-rounded interval arithmetic (\texttt{mpmath.iv}, 40 digits \cite{mpmath,moore}) and confirmed strictly negative at the lower endpoint and strictly positive at the upper. Uniqueness is supplied by Theorems~\ref{thm:chord} and \ref{thm:convex}, so each printed interval contains the unique root. The caps $E_4(120^\circ)$ and $E_4(120^\circ)/c(120^\circ)$ are interval evaluations rounded outward. The arc gate of Section~\ref{sec:design} was evaluated with ordinary 40-digit arithmetic, since \texttt{mpmath.iv} provides no interval arcsine; it is not interval-certified. Stochastic thresholds from the benchmarks are not interval-certified.
+
+\section{Reproducibility}\label{app:repro}
+\begin{verbatim}
+python3 d4_benchmark.py                 # v1   seed 20261104
+python3 d4_benchmark_v2.py              # v2   seed 20261106
+python3 d4_benchmark_v2_1.py            # v2.1 seed 20261125 (Bonferroni)
+python3 d4_benchmark_v2_1.py --rule product
+python3 d4_benchmark_v2_2.py            # v2.2 seed 20261126
+cd paper && python3 make_paper_data.py  # regenerates every table in this paper
+\end{verbatim}
+Environment recorded in the frozen benchmark logs (not independently re-created for this manuscript build): Python 3.13.18, NumPy 2.5.3, SciPy 1.18.1; mpmath 1.4.1 is used for the interval checks. The release archive contains the frozen benchmark scripts and outputs at its top level, with this paper in \texttt{paper/}; \texttt{make\_paper\_data.py} reads the frozen outputs from the parent directory.
+
+\section{Source and output hashes}\label{app:hash}
+{\small\input{tables/t_hash}}
+
+\begin{thebibliography}{99}
+\bibitem{bakerrepo} C.~W.~Baker, \emph{A Constructible Cubic Error Cascade for Approximate Angle Trisection}, v1.0.1, \url{https://github.com/CWBaker360/Constructible-Cubic-Trisection}.
+\bibitem{wantzel} P.~L.~Wantzel, Recherches sur les moyens de reconna\^itre si un probl\`eme de g\'eom\'etrie peut se r\'esoudre avec la r\`egle et le compas, \emph{J.\ Math.\ Pures Appl.} 2 (1837) 366--372.
+\bibitem{wilks} S.~S.~Wilks, Determination of sample sizes for setting tolerance limits, \emph{Ann.\ Math.\ Statist.} 12 (1941) 91--96.
+\bibitem{owen} D.~B.~Owen, A survey of properties and applications of the noncentral $t$-distribution, \emph{Technometrics} 10(3) (1968) 445--478.
+\bibitem{krishnamoorthy} K.~Krishnamoorthy and T.~Mathew, \emph{Statistical Tolerance Regions: Theory, Applications, and Computation}, Wiley, 2009, \url{https://doi.org/10.1002/9780470473900}.
+\bibitem{searle} S.~R.~Searle, G.~Casella and C.~E.~McCulloch, \emph{Variance Components}, Wiley, 1992.
+\bibitem{satterthwaite} F.~E.~Satterthwaite, An approximate distribution of estimates of variance components, \emph{Biometrics Bulletin} 2 (1946) 110--114.
+\bibitem{dunn} O.~J.~Dunn, Multiple comparisons among means, \emph{J.\ Amer.\ Statist.\ Assoc.} 56(293) (1961) 52--64.
+\bibitem{clopper} C.~J.~Clopper and E.~S.~Pearson, The use of confidence or fiducial limits illustrated in the case of the binomial, \emph{Biometrika} 26(4) (1934) 404--413.
+\bibitem{moore} R.~E.~Moore, R.~B.~Kearfott and M.~J.~Cloud, \emph{Introduction to Interval Analysis}, SIAM, 2009.
+\bibitem{mpmath} The mpmath development team, \emph{mpmath: a Python library for arbitrary-precision floating-point arithmetic}, version 1.4.1 (released 15 March 2026), \url{https://pypi.org/project/mpmath/1.4.1/}.
+\bibitem{grafarend} E.~W.~Grafarend and F.~Sans\`o (eds.), \emph{Optimization and Design of Geodetic Networks}, Springer, 1985.
+\bibitem{dacar2011} F.~Dacar, \emph{An Infinite Sequence of Approximate Angle Trisections}, online manuscript, 2011, \url{https://dis.ijs.si/france/notes/nested-trisections.pdf} (accessed 5 November 2026).
+\bibitem{porter1991} A.~F.~Porter, Trisection: The Euclidean Problem of Trisecting a Random Angle and Proof of Impossibility, \emph{Survey Review} 31(241) (1991) 167--174, \url{https://doi.org/10.1179/sre.1991.31.241.167}.
+\bibitem{wallner2000} J.~Wallner, R.~Krasauskas and H.~Pottmann, Error propagation in geometric constructions, \emph{Computer-Aided Design} 32(11) (2000) 631--641, \url{https://doi.org/10.1016/S0010-4485(00)00053-1}.
+\bibitem{desaulniers1993} H.~Desaulniers and N.~F.~Stewart, Robustness of numerical methods in geometric computation when problem data is uncertain, \emph{Computer-Aided Design} 25(9) (1993) 539--545, \url{https://doi.org/10.1016/0010-4485(93)90070-5}.
+\end{thebibliography}
+\end{document}

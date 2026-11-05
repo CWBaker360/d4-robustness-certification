@@ -1,0 +1,26 @@
+{
+ "seed": 20261106,
+ "node_conf": 0.9897937816869885,
+ "simultaneous_conf_exact": 0.95,
+ "NP minimum sample sizes (r=1)": {
+  "p=0.999,conf=0.95": 2995,
+  "p=0.999,conf=0.9897937816869885": 4583,
+  "p=0.999,conf=0.99": 4603
+ },
+ "factor verification": {
+  "K(10,.99,.95) vs table 3.981": 3.9811178452730585,
+  "K(20,.95,.95) vs table 2.396": 2.3960016837521687,
+  "MC coverage of K_param(m=4) target 0.98979": 0.98993,
+  "MC coverage of K_param(m=32) target 0.98979": 0.989525,
+  "MC coverage of NP order stat (m=4583, r=1) target 0.98979": 0.99045
+ },
+ "truth control: certifiable domain start (deg)": 34.75,
+ "truth bias: certifiable domain start (deg)": 36.5,
+ "truth heavy: certifiable domain start (deg)": 41.0,
+ "truth stage: certifiable domain start (deg)": 35.25,
+ "python": "3.13.18",
+ "numpy": "2.5.3",
+ "scipy": "1.18.1",
+ "platform": "Linux-6.18.44-fc-v233-x86_64-with-glibc2.39",
+ "runtime_s": 53.4
+}

@@ -1,0 +1,24 @@
+{
+ "seed": 20261126,
+ "alpha": 0.001,
+ "beta": 0.0001,
+ "conf_5events": 0.99,
+ "conf_6events": 0.9916666666666667,
+ "m_NP_naive": 4603,
+ "m_NP_xfer": 5318,
+ "n_ref_blocks": 47873,
+ "k": 2,
+ "lam_stage4_rad_per_rad": 5.174965190666383e-05,
+ "min_e4pp_on_domain": 4.0509259259260834e-09,
+ "lam_stage4_finite_difference_max": 3.902836720470759e-05,
+ "regression_atom": {
+  "naive_fails": true,
+  "xfer_passes": true,
+  "PASS": true
+ },
+ "python": "3.13.18",
+ "numpy": "2.5.3",
+ "scipy": "1.18.1",
+ "platform": "Linux-6.18.44-fc-v233-x86_64-with-glibc2.39",
+ "runtime_s": 95.1
+}

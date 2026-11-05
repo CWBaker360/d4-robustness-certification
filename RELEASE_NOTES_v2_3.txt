@@ -1,0 +1,13 @@
+Baker Certified Robustness Threshold — manuscript v2.3
+2026-11-05
+
+Clean LaTeX rebuild from supplied d4_robustness_release(3).zip.
+Inserted related work in Introduction before Contributions.
+Corrected Section 5 variance-vs-standard-error description and network-design attribution.
+Updated bibliography entries [5], [11] and added [13]-[16]; issue numbers standardized.
+No reviewer-only text/pages included.
+Frozen benchmark scripts and output data were not modified.
+Original benchmark environment versions are transcribed from saved run logs (not reproduced with pip freeze).
+New SHA256SUMS lists every file in this archive except itself.
+Compilation: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex in paper/.
+Scope: regenerated paper; no independent Monte Carlo re-run and no instrument calibration.

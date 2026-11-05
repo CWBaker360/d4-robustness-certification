@@ -1,0 +1,2 @@
+seed=20261104 NREP=10000 python=3.13.18 numpy=2.5.3 scipy=1.18.1 platform=Linux-6.18.44-fc-v233-x86_64-with-glibc2.39
+sigma_C=10.0 arcsec sigma_R=4.0 arcsec; stage SDs chord=3e-05 scale=1.5e-05 rel=2e-05 arc=1.0 arcsec; runtime=77.2s

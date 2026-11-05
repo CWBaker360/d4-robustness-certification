@@ -1,0 +1,26 @@
+\begin{tabular}{llrccccc}
+\toprule
+Scenario & method & $m$ & simult.\ cov. & wrong / runs & 95\% upper & $\theta_{\min}$ & truth \\
+\midrule
+control & Gaussian & 8 & 95.74\% & 419/10000 & 4.53\% & 41.21$^\circ$ & 34.65$^\circ$ \\
+control & Gaussian & 32 & 97.32\% & 254/10000 & 2.81\% & 37.40$^\circ$ & 34.65$^\circ$ \\
+control & NP naive & 4603 & 99.65\% & 6/2000 & 0.59\% & 35.96$^\circ$ & 34.65$^\circ$ \\
+control & NP transfer & 5318 & 100.00\% & 0/2000 & 0.15\% & 39.78$^\circ$ & 34.65$^\circ$ \\
+bias & Gaussian & 8 & 95.82\% & 417/10000 & 4.51\% & 42.56$^\circ$ & 36.45$^\circ$ \\
+bias & Gaussian & 32 & 97.32\% & 263/10000 & 2.91\% & 38.94$^\circ$ & 36.45$^\circ$ \\
+bias & NP naive & 4603 & 99.65\% & 7/2000 & 0.66\% & 37.61$^\circ$ & 36.45$^\circ$ \\
+bias & NP transfer & 5318 & 100.00\% & 0/2000 & 0.15\% & 41.15$^\circ$ & 36.45$^\circ$ \\
+heavy & Gaussian & 8 & 28.63\% & 7090/10000 & 71.65\% & 39.01$^\circ$ & 40.85$^\circ$ \\
+heavy & Gaussian & 32 & 0.09\% & 9990/10000 & 99.95\% & 36.06$^\circ$ & 40.85$^\circ$ \\
+heavy & NP naive & 4603 & 95.80\% & 79/2000 & 4.74\% & 43.97$^\circ$ & 40.85$^\circ$ \\
+heavy & NP transfer & 5318 & 100.00\% & 0/2000 & 0.15\% & 51.74$^\circ$ & 40.85$^\circ$ \\
+stage4 & Gaussian & 8 & 95.89\% & 142/10000 & 1.63\% & 43.62$^\circ$ & 35.15$^\circ$ \\
+stage4 & Gaussian & 32 & 97.32\% & 25/10000 & 0.35\% & 39.50$^\circ$ & 35.15$^\circ$ \\
+stage4 & NP naive & 4603 & 99.20\% & 0/2000 & 0.15\% & 37.67$^\circ$ & 35.15$^\circ$ \\
+stage4 & NP transfer & 5318 & 100.00\% & 0/2000 & 0.15\% & 41.28$^\circ$ & 35.15$^\circ$ \\
+atom & Gaussian & 8 & 5.14\% & 9477/10000 & 95.13\% & 39.04$^\circ$ & 43.20$^\circ$ \\
+atom & Gaussian & 32 & 0.00\% & 10000/10000 & 100.00\% & 35.13$^\circ$ & 43.20$^\circ$ \\
+atom & NP naive & 4603 & 58.05\% & 821/2000 & 42.89\% & 43.41$^\circ$ & 43.20$^\circ$ \\
+atom & NP transfer & 5318 & 98.25\% & 35/2000 & 2.31\% & 47.96$^\circ$ & 43.20$^\circ$ \\
+\bottomrule
+\end{tabular}

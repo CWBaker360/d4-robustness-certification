@@ -1,0 +1,110 @@
+{
+ "chord_thresholds": [
+  [
+   "1e-8",
+   {
+    "lo": "1.548702823",
+    "hi": "1.548702826"
+   },
+   1.5487020056393563
+  ],
+  [
+   "1e-6",
+   {
+    "lo": "7.188519788",
+    "hi": "7.188519791"
+   },
+   7.1884379359693495
+  ],
+  [
+   "1e-4",
+   {
+    "lo": "33.373964194",
+    "hi": "33.373964197"
+   },
+   33.36577325471383
+  ]
+ ],
+ "eps_c_cap": [
+  "[0.00460787521653842513164825322470728555346645317, 0.00460787521653842513164825322470728555346645317]",
+  "[0.00460787521653842513164825322470728555354680923, 0.00460787521653842513164825322470728555354680923]"
+ ],
+ "r_cap": [
+  "[0.00890173135194359550085572450455287600270831303, 0.00890173135194359550085572450455287600270831303]",
+  "[0.00890173135194359550085572450455287600286436163, 0.00890173135194359550085572450455287600286436163]"
+ ],
+ "combined": {
+  "Fine numerical/CAD": {
+   "lo": "1.9463246",
+   "hi": "1.9463249"
+  },
+  "Controlled drafting (R = 100 mm)": {
+   "lo": "49.5050435",
+   "hi": "49.5050438"
+  },
+  "Coarse drafting (R = 100 mm)": {
+   "lo": "87.8108575",
+   "hi": "87.8108578"
+  }
+ },
+ "R_crit_mm": [
+  "183.4373024",
+  "183.4373027"
+ ],
+ "eps_a_gate_deg_r1e-3": 0.33270105477402734,
+ "v22_delta_arcsec": {
+  "control": 11.8,
+  "bias": 11.8,
+  "heavy": 36.36,
+  "stage4": 11.81,
+  "atom": 19.89
+ },
+ "v22_log": {
+  "m_NP_xfer": 5318,
+  "n_ref_blocks": 47873,
+  "lam_stage4_rad_per_rad": 5.174965190666383e-05,
+  "lam_stage4_finite_difference_max": 3.902836720470759e-05,
+  "regression_atom": {
+   "naive_fails": true,
+   "xfer_passes": true,
+   "PASS": true
+  },
+  "seed": 20261126
+ },
+ "cost": [
+  {
+   "alpha": 0.01,
+   "beta": 0.001,
+   "m_x": 530,
+   "total": 2650,
+   "n_ref": 4786
+  },
+  {
+   "alpha": 0.005,
+   "beta": 0.0005,
+   "m_x": 1062,
+   "total": 5310,
+   "n_ref": 9573
+  },
+  {
+   "alpha": 0.001,
+   "beta": 0.0001,
+   "m_x": 5318,
+   "total": 26590,
+   "n_ref": 47873
+  }
+ ],
+ "sha256": {
+  "d4_benchmark.py": "8a5b88b5425af3aa94e73979b26758964c2990a4ef9ae21e223ca96dddf07457",
+  "d4_benchmark_results.csv": "69d3f1b8ef581aece832719eeb17aa26bc763103f4b973d4166381a3e2dbcca5",
+  "d4_benchmark_v2.py": "58bbe6295f588a1be3b3197456fc87a9edde08d8cdfb66f378a26d5132ffc55a",
+  "v2_results.csv": "4e9e3cada43cffd3820bcbde262d8cf24f0a8aee2d84be6a1228cbe672fd5bb4",
+  "d4_benchmark_v2_1.py": "695f1cb1fff9ba8c5afad81e83a8503b7082be243eb16b2d8209e8118565c4fa",
+  "v21_bonferroni_results.csv": "3bf41c163e01b003b93ad09e8245dc461082d4fbf6bd992ccd147df57cfa6aad",
+  "v21_product_results.csv": "9cfc02d8d7bb6281d425feac94019a02762a9ae47161fd2b589fc1fc64019d68",
+  "d4_benchmark_v2_2.py": "6f9f93ab78d6412871737e71217e9318ee3838c0d6351a7d3ad92b3da4e1f6ec",
+  "v22_results.csv": "7534f09dfb9f01f2edee41869253b003b5ad23a17f8b5ee7b57d48076cc89028",
+  "v22_node_coverage.csv": "ff6c4f67316c32fb071447db019711e1b3b23bfb3fb1c9bceccee0f3b3792d65",
+  "v22_log.json": "225337fede7a783ff2f2b4aef91b6867042bfabb23e61a88107605cacfd3f5eb"
+ }
+}
